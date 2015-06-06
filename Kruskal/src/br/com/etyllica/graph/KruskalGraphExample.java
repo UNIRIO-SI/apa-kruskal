@@ -1,10 +1,7 @@
 package br.com.etyllica.graph;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import br.com.etyllica.context.Application;
 import br.com.etyllica.core.event.GUIEvent;
@@ -12,6 +9,7 @@ import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.core.graphics.SVGColor;
+import br.com.etyllica.graph.kruskal.Kruskal;
 import br.com.etyllica.linear.Point2D;
 import br.com.etyllica.linear.graph.Node;
 import br.com.etyllica.linear.graph.common.IntegerEdge;
@@ -22,9 +20,8 @@ public class KruskalGraphExample extends Application{
 	public KruskalGraphExample(int w, int h) {
 		super(w, h);
 	}
-
-	private List<IntegerEdge> allEdges = new ArrayList<IntegerEdge>();
-	private Set<IntegerEdge> selected = new HashSet<IntegerEdge>();
+	
+	private Kruskal k = new Kruskal();
 	
 	private Node<Integer> root;
 	
@@ -67,20 +64,21 @@ public class KruskalGraphExample extends Application{
 		
 		addEdge(new IntegerEdge(firstChild, secondChild, 20));
 		
-		selected.add(thirdEdge);
 		moveNodes(root);
+		
+		//Find minimun spanning tree using kruskal
+		IntegerGraph mg = k.minimunSpanningTree(graph);
 		
 		loading = 100;
 	}
 	
 	private void addEdge(IntegerEdge edge) {
-		allEdges.add(edge);
+		k.addEdge(edge);
 		graph.addEdge(edge);
 	}
 	
 	@Override
 	public void draw(Graphic g) {
-		
 		drawNode(g, root);
 	}
 	
@@ -117,7 +115,7 @@ public class KruskalGraphExample extends Application{
 		
 		for(IntegerEdge edge: edges) {
 			
-			if(selected.contains(edge)) {
+			if(k.selectedEdges.contains(edge)) {
 				g.setColor(Color.GREEN);
 			}
 			
@@ -135,7 +133,7 @@ public class KruskalGraphExample extends Application{
 			
 			drawNode(g, edge.getDestination());
 		}
-				
+	
 	}
 	
 	public void moveNodes(Node<Integer> root) {
@@ -173,8 +171,7 @@ public class KruskalGraphExample extends Application{
 		    		    
 		    moveChildrenNodes(destination, angle);
 		}
-		
-	}	
+	}
 		
 	@Override
 	public GUIEvent updateMouse(PointerEvent event) {

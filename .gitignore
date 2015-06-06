@@ -1,4 +1,6 @@
 *.class
+*/src/.classpath
+*/src/.project
 .settings*
 
 # Mobile Tools for Java (J2ME)
