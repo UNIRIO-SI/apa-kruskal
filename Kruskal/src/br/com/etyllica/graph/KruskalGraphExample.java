@@ -44,8 +44,14 @@ public class KruskalGraphExample extends Application{
 		firstChild = new Node<Integer>(1);		
 		Node<Integer> secondChild = new Node<Integer>(2);
 		Node<Integer> thirdChild = new Node<Integer>(3);
-		
 		Node<Integer> firstChildSon = new Node<Integer>(4);
+		
+		//Other component
+		Node<Integer> nodeA = new Node<Integer>(19);
+		Node<Integer> nodeB = new Node<Integer>(20);
+		Node<Integer> nodeC = new Node<Integer>(21);
+		Node<Integer> nodeD = new Node<Integer>(22);
+		Node<Integer> nodeE = new Node<Integer>(23);
 		
 		//Add three child nodes
 		graph.addNode(root);
@@ -64,10 +70,25 @@ public class KruskalGraphExample extends Application{
 		
 		addEdge(new IntegerEdge(firstChild, secondChild, 20));
 		
+		addEdge(new IntegerEdge(firstChildSon, nodeA, 20));
+		addEdge(new IntegerEdge(nodeA, nodeB, 6));
+		addEdge(new IntegerEdge(nodeA, nodeC, 9));
+		addEdge(new IntegerEdge(nodeC, nodeD, 10));
+		addEdge(new IntegerEdge(nodeC, nodeE, 8));
+		
 		moveNodes(root);
 		
 		//Find minimun spanning tree using kruskal
+		long beforeKruskal = System.currentTimeMillis();
+		System.out.println("Before: "+beforeKruskal);
+		
 		IntegerGraph mg = k.minimunSpanningTree(graph);
+		
+		long afterKruskal = System.currentTimeMillis();
+		System.out.println("After: "+afterKruskal);
+		
+		long time = afterKruskal-beforeKruskal;
+		System.out.println("Time: "+time);
 		
 		loading = 100;
 	}
