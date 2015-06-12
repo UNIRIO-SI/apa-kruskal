@@ -42,12 +42,10 @@ public class KruskalXMLGraphExample extends Application{
 
 		graph = new IntegerGraph();
 
-		String path = PathHelper.currentDirectory().substring(5)+"../graphs/";
-		System.out.println("Path: "+path);
-
+		//Open file in graphs folder
 		String graphFile = "complete_graph_100.xml";
 
-		GraphRepository gr = loadGraph(path, graphFile);
+		GraphRepository gr = loadGraph(graphFile);
 
 		if (gr != null) {
 			for (GraphInfo graphInfo:gr.getGraphInfo()) {
@@ -87,8 +85,10 @@ public class KruskalXMLGraphExample extends Application{
 		}
 	}
 
-	private GraphRepository loadGraph(String path, String graphFile) {
+	private GraphRepository loadGraph(String graphFile) {
 
+		String path = PathHelper.currentDirectory().substring(5)+"../graphs/";
+		
 		GraphRepository gr = null;
 
 		try {
