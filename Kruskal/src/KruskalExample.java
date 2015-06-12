@@ -1,6 +1,7 @@
 import br.com.etyllica.EtyllicaFrame;
 import br.com.etyllica.context.Application;
 import br.com.etyllica.graph.KruskalGraphExample;
+import br.com.etyllica.graph.KruskalXMLGraphExample;
 
 public class KruskalExample extends EtyllicaFrame {
 
@@ -18,7 +19,8 @@ public class KruskalExample extends EtyllicaFrame {
 	@Override
 	public Application startApplication() {
 		initialSetup("../../../../../");
-		return new KruskalGraphExample(w,h);
+		//return new KruskalGraphExample(w,h);
+		return new KruskalXMLGraphExample(w,h);
 	}
 
 }
