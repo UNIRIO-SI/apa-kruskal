@@ -3,8 +3,10 @@ package br.com.etyllica.graph;
 import java.awt.Color;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -32,13 +34,17 @@ public class KruskalXMLGraphExample extends Application{
 	private Kruskal k = new Kruskal();
 
 	private Node<Integer> root;
+	
+	private Set<Node<Integer>> visited = new HashSet<Node<Integer>>();
 
 	private IntegerGraph graph;
 
-	private final double nodeDistance = 70;
-
+	private final double nodeDistance = 350;
+	
 	@Override
 	public void load(){
+		
+		clearBeforeDraw = false;
 
 		graph = new IntegerGraph();
 
@@ -64,10 +70,12 @@ public class KruskalXMLGraphExample extends Application{
 				}
 				
 				root = nodes.get(0);
+				root.setLocation(w/2, h/2);
 				
-				System.out.println("Start moving nodes");
+				System.out.println("Start moving nodes: "+nodes.size());
 				moveNodes(root);
 				System.out.println("End moving nodes");
+				visited.clear();
 
 				loading = 100;
 				//Find minimun spanning tree using kruskal
@@ -111,7 +119,12 @@ public class KruskalXMLGraphExample extends Application{
 
 	@Override
 	public void draw(Graphic g) {
+		//Fill background
+		g.setColor(Color.WHITE);
+		g.fillRect(this);
+		
 		drawNode(g, root);
+		visited.clear();
 	}
 
 	private void drawLeaf(Graphic g, Node<Integer> node) {
@@ -133,7 +146,12 @@ public class KruskalXMLGraphExample extends Application{
 	}
 
 	private void drawNode(Graphic g, Node<Integer> node) {
-
+		if(visited.contains(node)) {
+			return;
+		}
+		
+		visited.add(node);
+		
 		//Draw Children
 		drawEdges(g, node);
 
@@ -174,14 +192,22 @@ public class KruskalXMLGraphExample extends Application{
 
 	private void moveChildrenNodes(Node<Integer> node, double initialAngle) {
 
+		if(visited.contains(node)) {
+			return;
+		}
+		
+		visited.add(node);
+		
+		double maxAngle = 360;
+		
 		List<IntegerEdge> edges = graph.getEdges(node);
 
 		int size = edges.size()+1;
 
-		double theta = 180 / size;
+		double theta = maxAngle / size;
 
 		int i = 0;
-
+		
 		for(IntegerEdge edge: edges) {
 
 			i++;
@@ -190,8 +216,8 @@ public class KruskalXMLGraphExample extends Application{
 
 			double angle = (theta * i);
 
-			if(initialAngle>90) {
-				angle += initialAngle-90;
+			if(initialAngle>maxAngle/2) {
+				angle += initialAngle-maxAngle/2;
 			} else {
 				angle -= initialAngle;
 			}

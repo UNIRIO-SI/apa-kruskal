@@ -8,7 +8,7 @@ public class KruskalExample extends EtyllicaFrame {
 	private static final long serialVersionUID = 1L;
 
 	public KruskalExample() {
-		super(800, 600);
+		super(1024, 768);
 	}
 
 	public static void main(String[] args){
