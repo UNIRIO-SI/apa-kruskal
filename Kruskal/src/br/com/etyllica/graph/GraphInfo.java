@@ -13,7 +13,7 @@ public class GraphInfo {
 	private String type;
 	private List<Integer> nodeName;
 	private List<EdgeInfo> edgeInfo;
-	
+
 	public Integer getNumberOfNodes() {
 		return numberOfNodes;
 	}
@@ -51,7 +51,7 @@ public class GraphInfo {
 		}
 		this.nodeName.add(nodeName);
 	}
-	
+
 	public void addEdgeInfo(Integer firstNode, Integer secondNode, Integer value) {
 		if (this.edgeInfo == null) {
 			this.edgeInfo = new ArrayList<EdgeInfo>();
@@ -62,5 +62,4 @@ public class GraphInfo {
 		edgeInfo.setValue(value);
 		this.edgeInfo.add(edgeInfo);
 	}
-	
 }

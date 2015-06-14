@@ -18,7 +18,7 @@ import br.com.etyllica.core.event.KeyEvent;
 import br.com.etyllica.core.event.PointerEvent;
 import br.com.etyllica.core.graphics.Graphic;
 import br.com.etyllica.core.graphics.SVGColor;
-import br.com.etyllica.graph.kruskal.Kruskal;
+import br.com.etyllica.graph.kruskal.KruskalGraph;
 import br.com.etyllica.linear.Point2D;
 import br.com.etyllica.linear.graph.Node;
 import br.com.etyllica.linear.graph.common.IntegerEdge;
@@ -31,7 +31,7 @@ public class KruskalXMLGraphExample extends Application{
 		super(w, h);
 	}
 
-	private Kruskal k = new Kruskal();
+	private KruskalGraph k;
 
 	private Node<Integer> root;
 	
@@ -42,58 +42,76 @@ public class KruskalXMLGraphExample extends Application{
 	private final double nodeDistance = 350;
 	
 	@Override
-	public void load(){
+	public void load() {
 		
 		clearBeforeDraw = false;
 
 		graph = new IntegerGraph();
 
 		//Open file in graphs folder
-		String graphFile = "complete_graph_100.xml";
+		String graphFile = "complete_graph_200.xml";
 
-		GraphRepository gr = loadGraph(graphFile);
+		GraphRepository gr = loadGraphFromFile(graphFile);
 
 		if (gr != null) {
 			for (GraphInfo graphInfo:gr.getGraphInfo()) {
-				Map<Integer, Node<Integer>> nodes = new HashMap<Integer, Node<Integer>>();
-
-				for (int i = 0; i <graphInfo.getNodeName().size(); i++){
-					Node<Integer> node = new Node<Integer>(graphInfo.getNodeName().get(i));
-					nodes.put(graphInfo.getNodeName().get(i), node);
-					
-					loading = (i*100)/graphInfo.getNodeName().size();
-				}
-				for (EdgeInfo edgeInfo: graphInfo.getEdgeInfo()) {
-					Node<Integer> node1 = nodes.get(edgeInfo.getFirstNode());
-					Node<Integer> node2 = nodes.get(edgeInfo.getSecondNode());
-					addEdge(new IntegerEdge(node1, node2, edgeInfo.getValue()));
-				}
-				
-				root = nodes.get(0);
-				root.setLocation(w/2, h/2);
+				Map<Integer, Node<Integer>> nodes = loadGraphInfo(graphInfo);
 				
 				System.out.println("Start moving nodes: "+nodes.size());
 				moveNodes(root);
 				System.out.println("End moving nodes");
+				
 				visited.clear();
-
+				
+				k = new KruskalGraph(graph);
+				runKruskal();
+				
 				loading = 100;
-				//Find minimun spanning tree using kruskal
-				long beforeKruskal = System.currentTimeMillis();
-				System.out.println("Before: "+beforeKruskal);
-
-				IntegerGraph mg = k.minimunSpanningTree(graph);
-
-				long afterKruskal = System.currentTimeMillis();
-				System.out.println("After: "+afterKruskal);
-
-				long time = afterKruskal-beforeKruskal;
-				System.out.println("Time: "+time);
 			}
 		}
 	}
 
-	private GraphRepository loadGraph(String graphFile) {
+	private void runKruskal() {
+		//Find minimun spanning tree using kruskal
+		long beforeKruskal = System.currentTimeMillis();
+		System.out.println("----------------------");
+		System.out.println("Before Kruskal");
+		System.out.println("Time: "+beforeKruskal);
+		System.out.println("Edges: "+k.getEdges().size());
+		
+		IntegerGraph mg = k.minimunSpanningTree();
+
+		long afterKruskal = System.currentTimeMillis();
+		System.out.println("After Kruskal");
+		System.out.println("Time: "+afterKruskal);
+		System.out.println("Edges: "+mg.getAllEdgesAsList().size());
+
+		System.out.println("----------------------");
+		long time = afterKruskal-beforeKruskal;
+		System.out.println("Total Time: "+time+"ms");
+	}
+
+	private Map<Integer, Node<Integer>> loadGraphInfo(GraphInfo graphInfo) {
+		Map<Integer, Node<Integer>> nodes = new HashMap<Integer, Node<Integer>>();
+
+		for (int i = 0; i <graphInfo.getNodeName().size(); i++){
+			Node<Integer> node = new Node<Integer>(graphInfo.getNodeName().get(i));
+			nodes.put(graphInfo.getNodeName().get(i), node);
+			
+			loading = (i*100)/graphInfo.getNodeName().size();
+		}
+		for (EdgeInfo edgeInfo: graphInfo.getEdgeInfo()) {
+			Node<Integer> node1 = nodes.get(edgeInfo.getFirstNode());
+			Node<Integer> node2 = nodes.get(edgeInfo.getSecondNode());
+			graph.addEdge(new IntegerEdge(node1, node2, edgeInfo.getValue()));
+		}
+		
+		root = nodes.get(0);
+		root.setLocation(w/2, h/2);
+		return nodes;
+	}
+
+	private GraphRepository loadGraphFromFile(String graphFile) {
 
 		String path = PathHelper.currentDirectory().substring(5)+"../graphs/";
 		
@@ -110,11 +128,6 @@ public class KruskalXMLGraphExample extends Application{
 		}
 
 		return gr;
-	}
-
-	private void addEdge(IntegerEdge edge) {
-		k.addEdge(edge);
-		graph.addEdge(edge);
 	}
 
 	@Override
@@ -165,14 +178,15 @@ public class KruskalXMLGraphExample extends Application{
 
 		for(IntegerEdge edge: edges) {
 
-			if(k.selectedEdges.contains(edge)) {
-				g.setColor(Color.GREEN);
-			}
-
 			Point2D origin = edge.getOrigin().getPoint();
 			Point2D destination = edge.getDestination().getPoint();
+			
+			if(k.getSelectedEdges().contains(edge)) {
+				g.setColor(Color.GREEN);
+				g.drawLine(origin, destination);
+			}
 
-			g.drawLine(origin, destination);
+			/*g.drawLine(origin, destination);
 
 			int wx = (int)((origin.getX()+destination.getX())/2);
 			int wy = (int)((origin.getY()+destination.getY())/2);
@@ -181,7 +195,7 @@ public class KruskalXMLGraphExample extends Application{
 
 			g.drawString(Integer.toString(edge.getWeight()), wx-4, wy+3);
 
-			drawNode(g, edge.getDestination());
+			drawNode(g, edge.getDestination());*/
 		}
 
 	}
