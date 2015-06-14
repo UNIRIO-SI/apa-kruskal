@@ -61,8 +61,8 @@ public class GraphLoader {
 						int destinationIndex = Integer.parseInt(parts[1]);
 						int cost = Integer.parseInt(parts[2]);
 						
-						nodes.put(originIndex, new Node<Integer>(originIndex));
-						nodes.put(destinationIndex, new Node<Integer>(destinationIndex));
+						addNode(nodes, originIndex);
+						addNode(nodes, destinationIndex);
 						
 						Node<Integer> origin = nodes.get(originIndex);
 						Node<Integer> destination = nodes.get(destinationIndex);
@@ -83,6 +83,12 @@ public class GraphLoader {
 		}
 
 		return graphs;
+	}
+
+	private void addNode(Map<Integer, Node<Integer>> nodes, int originIndex) {
+		if(!nodes.containsKey(originIndex)) {
+			nodes.put(originIndex, new Node<Integer>(originIndex));	
+		}
 	}
 
 	private String fixLineSpaces(String line) {

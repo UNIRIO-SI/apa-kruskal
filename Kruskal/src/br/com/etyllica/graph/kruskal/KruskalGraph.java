@@ -1,6 +1,7 @@
 package br.com.etyllica.graph.kruskal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +28,7 @@ public class KruskalGraph {
 		super();
 		//Init all edges
 		this.edges.addAll(graph.getEdges());
-
+		
 		//foreach v ∈ G.V:
 		//MAKE-SET(v)
 		for(Node<Integer> node: graph.getNodes()) {
@@ -44,8 +45,11 @@ public class KruskalGraph {
 	 */
 	public IntegerGraph minimunSpanningTree() {
 
+		Collections.sort(this.edges);
+		
+		int e = 0;
 		for (IntegerEdge edge : edges) {
-
+			
 			//If do not closes cycle
 			if (!closesCycle(edge)) {
 				unionFind(edge);
